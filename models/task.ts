@@ -15,6 +15,7 @@ export interface TaskProps {
     id: number;
     name: string;
     description: string;
+    status:string;
 }
 
 export interface TaskCreationProps extends Optional<TaskProps, "id"> {}
@@ -36,6 +37,9 @@ export default function(sequelize:Sequelize): ModelCtor<TaskInstance>{
             type:DataTypes.STRING
         },
         description: {
+            type: DataTypes.STRING
+        },
+        status: {
             type: DataTypes.STRING
         }
     },{
