@@ -1,10 +1,12 @@
 import {ModelCtor, Sequelize} from "sequelize";
 import {UserInstance} from "./user";
+import {TaskInstance} from "./task";
 
 
 export interface SequelizeManagerProps {
     sequelize: Sequelize;
     User: ModelCtor<UserInstance>;
+    Task: ModelCtor<TaskInstance>;
 }
 
 export class SequelizeManager implements SequelizeManagerProps {
@@ -44,11 +46,13 @@ export class SequelizeManager implements SequelizeManagerProps {
 
     private static associate(props: SequelizeManagerProps): void {
         props.User.hasMany(props.Task);
-        prpos.Task
+        props.Task.belongsTo(props.User)
 
     }
 
     private constructor(props: SequelizeManagerProps) {
-
+        this.sequelize = props.sequelize;
+        this.User = props.User;
+        this.Task = props.Task;
     }
 }

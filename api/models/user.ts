@@ -10,12 +10,11 @@ export interface UserProps {
 export interface UserCreationProps extends Optional<UserProps, "id"> {}
 
 export interface UserInstance extends Model<UserProps,UserCreationProps>,UserProps{
-
     getTask: HasManyGetAssociationMixin<TaskInstance>;
     setTask: HasManySetAssociationMixin<TaskInstance, "id">;
 }
 
-export default function(sequelize:Sequelize): ModelCtor<AnimalInstance>{
+export default function(sequelize:Sequelize): ModelCtor<UserInstance>{
     return sequelize.define<UserInstance>("user",{
         id: {
             type: DataTypes.BIGINT,
