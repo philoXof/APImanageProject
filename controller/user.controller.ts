@@ -21,8 +21,8 @@ export class UserController{
 
     public async getAll(limit:number,offset:number):Promise<UserInstance[] | null>{
         return await this.User.findAll({
-            // limit,
-            // offset
+             limit,
+             offset
         });
     }
 
@@ -64,7 +64,8 @@ export class UserController{
     }
 
     public async update(options: UserCreationProps):Promise<UserInstance | null>{
-        const userUpdate = await this.getById(options.id);
+        if(options.id === undefined) return null;
+        const userUpdate = await this.getById(options.id.toString());
 
         if(userUpdate === null)
         {

@@ -1,4 +1,14 @@
-import {Sequelize,Optional,Model,DataTypes} from "sequelize";
+import {
+    Sequelize,
+    Optional,
+    Model,
+    DataTypes,
+    ModelCtor,
+    HasManyGetAssociationsMixin,
+    HasOneGetAssociationMixin,
+    HasOneSetAssociationMixin,
+    HasManySetAssociationsMixin
+} from "sequelize";
 
 
 export interface TaskProps {

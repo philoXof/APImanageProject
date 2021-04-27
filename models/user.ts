@@ -1,4 +1,14 @@
-import {Sequelize,Optional,Model,DataTypes} from "sequelize";
+import {
+    Sequelize,
+    Optional,
+    Model,
+    DataTypes,
+    ModelCtor,
+    HasManyGetAssociationsMixin,
+    HasOneGetAssociationMixin,
+    HasOneSetAssociationMixin,
+    HasManySetAssociationsMixin
+} from "sequelize";
 import {TaskInstance} from "./task";
 
 
@@ -10,8 +20,8 @@ export interface UserProps {
 export interface UserCreationProps extends Optional<UserProps, "id"> {}
 
 export interface UserInstance extends Model<UserProps,UserCreationProps>,UserProps{
-    getTask: HasManyGetAssociationMixin<TaskInstance>;
-    setTask: HasManySetAssociationMixin<TaskInstance, "id">;
+    getTask: HasManyGetAssociationsMixin<TaskInstance>;
+    setTask: HasManySetAssociationsMixin<TaskInstance, "id">;
 }
 
 export default function(sequelize:Sequelize): ModelCtor<UserInstance>{
@@ -23,7 +33,7 @@ export default function(sequelize:Sequelize): ModelCtor<UserInstance>{
         },
         name:{
             type:DataTypes.STRING
-        },
+        }
 
     },{
         freezeTableName: true,

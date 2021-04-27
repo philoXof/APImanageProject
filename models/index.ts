@@ -1,6 +1,6 @@
 import {ModelCtor, Sequelize} from "sequelize";
-import {UserInstance} from "./user";
-import {TaskInstance} from "./task";
+import userCreator,{UserInstance} from "./user";
+import taskCreator,{TaskInstance} from "./task";
 
 
 export interface SequelizeManagerProps {
