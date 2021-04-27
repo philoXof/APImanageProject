@@ -75,7 +75,7 @@ export class UserController{
         {
             return await userUpdate.update({
 
-                name: options.name
+                name: options.firstName
             }, {
                 where: {
                     id: options.id

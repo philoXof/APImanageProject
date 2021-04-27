@@ -64,6 +64,7 @@ export class TaskController{
     }
 
     public async update(options: TaskCreationProps):Promise<TaskInstance | null>{
+        if (options.id === undefined) return null;
         const taskUpdate = await this.getById(options.id.toString());
 
         if(taskUpdate === null)

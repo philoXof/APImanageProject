@@ -13,8 +13,9 @@ import {TaskInstance} from "./task";
 
 
 export interface UserProps {
-    id: number;
-    name: string;
+    id: string;
+    firstName: string;
+    lastName: string;
 }
 
 export interface UserCreationProps extends Optional<UserProps, "id"> {}
@@ -31,7 +32,9 @@ export default function(sequelize:Sequelize): ModelCtor<UserInstance>{
             primaryKey: true,
             autoIncrement: true
         },
-        name:{
+        firstName:{
+            type:DataTypes.STRING
+        },lastName:{
             type:DataTypes.STRING
         }
 
