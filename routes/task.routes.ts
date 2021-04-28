@@ -1,8 +1,12 @@
 import express from "express";
 import {TaskController} from "../controller/task.controller";
+import { UserController } from "../controller/user.controller";
 
 const taskRoutes = express();
 
+/**
+ * get task by id
+ */
 taskRoutes.get("/:id",async function(req, res){
     const id = req.params.id;
     if(id===undefined){
@@ -19,11 +23,16 @@ taskRoutes.get("/:id",async function(req, res){
     }
 });
 
+/**
+ * get all task with limit && / || offset
+ */
 taskRoutes.get("/",async function(req, res){
     const limit = parseInt(req.query.limit as string) || 10;
     const offset = parseInt(req.query.offset as string) || 0;
+
     const taskController = await TaskController.getInstance();
     const taskList = await taskController.getAll(limit,offset);
+
     if(taskList!==null){
         res.json(taskList);
         res.status(201).end();
@@ -32,53 +41,152 @@ taskRoutes.get("/",async function(req, res){
     }
 });
 
+/**
+ * add task
+ * by default no user assigned && status "disponible"
+ */
 taskRoutes.post("/",async function(req, res) {
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
-    if(firstName === undefined || lastName  ){
+    const name = req.body.name;
+    const description = req.body.description;
+    if(name === undefined || description === undefined ){
         res.status(400).end();
         return;
     }
-    const userController = await UserController.getInstance();
-    const user = await userController.add({
-        firstName: firstName,
-        lastName
+    const taskController = await TaskController.getInstance();
+    const task = await taskController.add({
+        name,
+        description,
+        status:"disponible",
+        user_id:null
     });
-    if(user!==null){
+    if(task!==null){
         res.status(201);
-        res.json(user);
+        res.json(task);
     }else {
         res.status(409).end();
     }
 });
 
-taskRoutes.put("/:id",async function(req, res){
+/**
+ * update task name / description
+ */
+taskRoutes.put("/name_desc:id",async function(req, res){
     const id = req.params.id;
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
+    const name = req.body.name;
+    const description = req.body.description;
 
-    if(id === null || lastName === null || firstName === null)
+    if(id === undefined || name === undefined || description === undefined)
     {
         res.status(400).end();
         return;
     }
-
-    const userController = await UserController.getInstance();
-    const user = await userController.update({
-        id,
-        firstName,
-        lastName
+    const taskController = await TaskController.getInstance();
+    const task = await taskController.getById(id);
+    if(task===null){
+        res.status(404).end();
+    }
+    const updateTask = await taskController.update({
+        id:parseInt(id),
+        name,
+        description,
+        status:task.status,
+        user_id:null
     });
-    if(user === null)
+    if(updateTask === null)
     {
         res.status(404).end();
     }
     else
     {
-        res.json(user);
+        res.json(updateTask);
     }
 });
 
+/**
+ * asign task to user need user's id in body && task id in params
+ */
+taskRoutes.put("/userTask:id",async function(req, res){
+    const id = parseInt(req.params.id);
+    const user_id = req.body.user_id;
+    //TODO: prendre en compte si la tache est déja finis ou pas
+    if(id === undefined || user_id === undefined )
+    {
+        res.status(400).end();
+        return;
+    }
+    const userController = await UserController.getInstance();
+    const user = await userController.getById(user_id);
+    if (user===null) {
+        res.status(404).end();
+    }
+
+    const taskController = await TaskController.getInstance();
+    const task = await taskController.getById(id.toString());
+    if(task===null){
+        res.status(404).end();
+    }
+    // @ts-ignore
+    const updateTask = await taskController.update({
+        id:id,
+        name:task.name,
+        description:task.description,
+        status:"en cours",
+        user_id:parseInt(user.id)
+    });
+    if(updateTask === null)
+    {
+        res.status(404).end();
+    }
+    else
+    {
+        res.json(updateTask);
+    }
+});
+
+/**
+ * user finish task
+ */
+taskRoutes.put("/userTask:id",async function(req, res){
+    const id = parseInt(req.params.id);
+    const user_id = req.body.user_id;
+
+    if(id === undefined || user_id === undefined )
+    {
+        res.status(400).end();
+        return;
+    }
+    const userController = await UserController.getInstance();
+    const user = await userController.getById(user_id);
+    if (user===null) {
+        res.status(404).end();
+    }
+
+    const taskController = await TaskController.getInstance();
+    const task = await taskController.getById(id.toString());
+    if(task===null){
+        res.status(404).end();
+    }
+    // @ts-ignore
+    const updateTask = await taskController.update({
+        id:id,
+        name:task.name,
+        description:task.description,
+        status:"en cours",
+        user_id:parseInt(user.id)
+    });
+    if(updateTask === null)
+    {
+        res.status(404).end();
+    }
+    else
+    {
+        res.json(updateTask);
+    }
+});
+
+/**
+ * delete task by id
+ */
 taskRoutes.delete("/:id", async function(req, res) {
     const id = req.params.id;
 
@@ -86,10 +194,9 @@ taskRoutes.delete("/:id", async function(req, res) {
     {
         res.status(400).end();
     }
-    const userController = await UserController.getInstance();
-    const userRemove = await userController.removeById(id);
-
-    if(userRemove)
+    const taskController = await TaskController.getInstance();
+    const taskRemove = await taskController.removeById(id);
+    if(taskRemove)
     {
         res.status(204).end();
     }

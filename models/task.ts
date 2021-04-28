@@ -16,6 +16,7 @@ export interface TaskProps {
     name: string;
     description: string;
     status:string;
+    user_id:number|null;
 }
 
 export interface TaskCreationProps extends Optional<TaskProps, "id"> {}
@@ -41,6 +42,9 @@ export default function(sequelize:Sequelize): ModelCtor<TaskInstance>{
         },
         status: {
             type: DataTypes.STRING
+        },
+        user_id:{
+            type:DataTypes.BIGINT
         }
     },{
         freezeTableName: true,

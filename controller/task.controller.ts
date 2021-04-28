@@ -71,11 +71,9 @@ export class TaskController{
         {
             return null;
         }
-        else
-        {
+        else {
             return await taskUpdate.update({
-
-                name: options.name
+                ...options
             }, {
                 where: {
                     id: options.id
