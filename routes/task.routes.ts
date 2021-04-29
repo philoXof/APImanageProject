@@ -23,11 +23,16 @@ taskRoutes.get("/:id",async function(req, res){
     }
 });
 
+
+//todo get by id user
+//todo get by status
+
 /**
  * get all task with limit && / || offset
  */
+//todo virer offset limit
 taskRoutes.get("/",async function(req, res){
-    const limit = parseInt(req.query.limit as string) || 10;
+    const limit = parseInt(req.query.limit as string) || 50;
     const offset = parseInt(req.query.offset as string) || 0;
 
     const taskController = await TaskController.getInstance();
@@ -56,7 +61,7 @@ taskRoutes.post("/",async function(req, res) {
     const task = await taskController.add({
         name,
         description,
-        status:"disponible",
+        status:"taches",
         user_id:null
     });
     if(task!==null){
@@ -84,21 +89,19 @@ taskRoutes.put("/name_desc:id",async function(req, res){
     const task = await taskController.getById(id);
     if(task===null){
         res.status(404).end();
-    }
-    const updateTask = await taskController.update({
-        id:parseInt(id),
-        name,
-        description,
-        status:task.status,
-        user_id:null
-    });
-    if(updateTask === null)
-    {
-        res.status(404).end();
-    }
-    else
-    {
-        res.json(updateTask);
+    }else {
+        const updateTask = await taskController.update({
+            id: parseInt(id),
+            name,
+            description,
+            status: task.status,
+            user_id: null
+        });
+        if (updateTask === null) {
+            res.status(404).end();
+        } else {
+            res.json(updateTask);
+        }
     }
 });
 
@@ -118,34 +121,34 @@ taskRoutes.put("/userTask:id",async function(req, res){
     const user = await userController.getById(user_id);
     if (user===null) {
         res.status(404).end();
-    }
-
-    const taskController = await TaskController.getInstance();
-    const task = await taskController.getById(id.toString());
-    if(task===null){
-        res.status(404).end();
-    }
-    // @ts-ignore
-    const updateTask = await taskController.update({
-        id:id,
-        name:task.name,
-        description:task.description,
-        status:"en cours",
-        user_id:parseInt(user.id)
-    });
-    if(updateTask === null)
-    {
-        res.status(404).end();
-    }
-    else
-    {
-        res.json(updateTask);
+    }else {
+        const taskController = await TaskController.getInstance();
+        const task = await taskController.getById(id.toString());
+        if (task === null) {
+            res.status(404).end();
+        } else {
+            const updateTask = await taskController.update({
+                id: id,
+                name: task.name,
+                description: task.description,
+                status: "en cours",
+                user_id: parseInt(user.id)
+            });
+            if (updateTask === null) {
+                res.status(404).end();
+            } else {
+                res.json(updateTask);
+            }
+        }
     }
 });
+
+
 
 /**
  * user finish task
  */
+//todo: ne peux pas finir une tache si pas d'utilisateur
 taskRoutes.put("/userTask:id",async function(req, res){
     const id = parseInt(req.params.id);
     const user_id = req.body.user_id;
@@ -159,28 +162,25 @@ taskRoutes.put("/userTask:id",async function(req, res){
     const user = await userController.getById(user_id);
     if (user===null) {
         res.status(404).end();
-    }
-
-    const taskController = await TaskController.getInstance();
-    const task = await taskController.getById(id.toString());
-    if(task===null){
-        res.status(404).end();
-    }
-    // @ts-ignore
-    const updateTask = await taskController.update({
-        id:id,
-        name:task.name,
-        description:task.description,
-        status:"en cours",
-        user_id:parseInt(user.id)
-    });
-    if(updateTask === null)
-    {
-        res.status(404).end();
-    }
-    else
-    {
-        res.json(updateTask);
+    }else{
+        const taskController = await TaskController.getInstance();
+        const task = await taskController.getById(id.toString());
+        if(task===null){
+            res.status(404).end();
+        }else {
+            const updateTask = await taskController.update({
+                id: id,
+                name: task.name,
+                description: task.description,
+                status: "en cours",
+                user_id: parseInt(user.id)
+            });
+            if (updateTask === null) {
+                res.status(404).end();
+            } else {
+                res.json(updateTask);
+            }
+        }
     }
 });
 

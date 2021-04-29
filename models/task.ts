@@ -10,13 +10,12 @@ import {
     HasManySetAssociationsMixin
 } from "sequelize";
 
-
 export interface TaskProps {
     id: number;
     name: string;
     description: string;
-    status:string;
-    user_id:number|null;
+    status: string;
+    user_id: number | null;
 }
 
 export interface TaskCreationProps extends Optional<TaskProps, "id"> {}
