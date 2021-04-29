@@ -44,18 +44,37 @@ taskRoutes.get("/idUser/:idUser",async function(req, res){
         res.status(409).end();
     }
 });
-//todo get by status
+
+/**
+ * obtenir la tache par status
+ * */
+taskRoutes.get("/status/:status",async function(req, res){
+    const status = req.params.status;
+    if(status === undefined)
+    {
+        res.status(400).end();
+        return;
+    }
+
+    const taskController = await TaskController.getInstance();
+    const task = await taskController.getByStatus();
+    if(task!==null){
+        res.json(task);
+        res.status(201).end();
+    }else {
+        res.status(409).end();
+    }
+});
+
+
 
 /**
  * get all task with limit && / || offset
  */
-//todo virer offset limit
-taskRoutes.get("/",async function(req, res){
-    const limit = parseInt(req.query.limit as string) || 50;
-    const offset = parseInt(req.query.offset as string) || 0;
-
+taskRoutes.get("/",async function(req, res)
+{
     const taskController = await TaskController.getInstance();
-    const taskList = await taskController.getAll(limit,offset);
+    const taskList = await taskController.getAll();
 
     if(taskList!==null){
         res.json(taskList);

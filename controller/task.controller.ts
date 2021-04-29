@@ -19,7 +19,8 @@ export class TaskController{
         this.Task = Task;
     }
 
-    public async getAll(limit?:number,offset?:number):Promise<TaskInstance[] | null>{
+    public async getAll(limit?:number,offset?:number):Promise<TaskInstance[] | null>
+    {
         return await this.Task.findAll({
             limit,
             offset
@@ -30,6 +31,14 @@ export class TaskController{
         return await this.Task.findOne({where: {
                 id
             }});
+    }
+
+    public async getByStatus(status:string):Promise<TaskInstance[] | null>{
+        return await this.Task.findAll({
+            where: {
+                status
+            }
+        });
     }
 
     public async removeById(id:string):Promise<Boolean>{
