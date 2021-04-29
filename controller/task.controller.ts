@@ -28,18 +28,31 @@ export class TaskController{
     }
 
     public async getById(id:string):Promise<TaskInstance|null>{
-        return await this.Task.findOne({where: {
+        return await this.Task.findOne({
+            where: {
                 id
             }});
     }
 
-    public async getByStatus(status:string):Promise<TaskInstance[] | null>{
+    public async getByStatus(status:string):Promise<TaskInstance[] | null>
+    {
         return await this.Task.findAll({
             where: {
                 status
             }
         });
     }
+
+    public async getTaskByIdUser(idUser: string) : Promise<TaskInstance[] | null>{
+        if(idUser === undefined) return null;
+
+        return await this.Task.findAll({
+            where: {
+                user_id:idUser
+            }
+        });
+    }
+
 
     public async removeById(id:string):Promise<Boolean>{
         const taskToDelete = await this.getById(id);

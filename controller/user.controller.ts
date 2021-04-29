@@ -19,7 +19,7 @@ export class UserController{
         this.User = User;
     }
 
-    public async getAll(limit:number,offset:number):Promise<UserInstance[] | null>{
+    public async getAll(limit?:number,offset?:number):Promise<UserInstance[] | null>{
         return await this.User.findAll({
              limit,
              offset
@@ -76,9 +76,7 @@ export class UserController{
         {
             return await userUpdate.update({
                 ...options
-            },
-                {
-
+            },{
                 where: {
                     id: options.id
                 }
