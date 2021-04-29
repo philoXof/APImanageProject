@@ -65,6 +65,7 @@ export class UserController{
 
     public async update(options: UserCreationProps):Promise<UserInstance | null>{
         if(options.id === undefined) return null;
+        console.log("id :" + options.id);
         const userUpdate = await this.getById(options.id.toString());
 
         if(userUpdate === null)
@@ -77,6 +78,7 @@ export class UserController{
                 ...options
             },
                 {
+
                 where: {
                     id: options.id
                 }

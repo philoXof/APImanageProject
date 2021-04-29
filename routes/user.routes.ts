@@ -35,7 +35,9 @@ userRoutes.get("/",async function(req, res){
 userRoutes.post("/",async function(req, res) {
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
-    if(firstName === undefined || lastName ===undefined ){
+
+    if(firstName === undefined || lastName === undefined )
+    {
         res.status(400).end();
         return;
     }

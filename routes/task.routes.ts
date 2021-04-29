@@ -26,7 +26,24 @@ taskRoutes.get("/:id",async function(req, res){
 });
 
 
-//todo get by id user
+/**
+ * get all task by the idUser
+ */
+taskRoutes.get("/idUser/:idUser",async function(req, res){
+    const id = req.params.idUser;
+    if(id===undefined){
+        res.status(400).end();
+        return;
+    }
+    const taskController = await TaskController.getInstance();
+    const task = await taskController.getAll();
+    if(task!==null){
+        res.json(task);
+        res.status(201).end();
+    }else {
+        res.status(409).end();
+    }
+});
 //todo get by status
 
 /**
@@ -166,7 +183,6 @@ taskRoutes.put("/userTask:id",async function(req, res){
         }
     }
 });
-
 
 
 /**

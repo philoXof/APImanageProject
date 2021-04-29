@@ -19,10 +19,10 @@ export class TaskController{
         this.Task = Task;
     }
 
-    public async getAll(limit:number,offset:number):Promise<TaskInstance[] | null>{
+    public async getAll(limit?:number,offset?:number):Promise<TaskInstance[] | null>{
         return await this.Task.findAll({
-            // limit,
-            // offset
+            limit,
+            offset
         });
     }
 
