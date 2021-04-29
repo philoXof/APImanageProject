@@ -20,10 +20,8 @@ userRoutes.get("/:id",async function(req, res){
 });
 
 userRoutes.get("/",async function(req, res){
-    const limit = parseInt(req.query.limit as string) || 10;
-    const offset = parseInt(req.query.offset as string) || 0;
     const userController = await UserController.getInstance();
-    const userList = await userController.getAll(limit,offset);
+    const userList = await userController.getAll();
     if(userList!==null){
         res.json(userList);
         res.status(201).end();

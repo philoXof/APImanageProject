@@ -30,13 +30,13 @@ taskRoutes.get("/:id",async function(req, res){
  * get all task by the idUser
  */
 taskRoutes.get("/idUser/:idUser",async function(req, res){
-    const id = req.params.idUser;
-    if(id===undefined){
+    const idUser = req.params.idUser;
+    if(idUser === undefined){
         res.status(400).end();
         return;
     }
     const taskController = await TaskController.getInstance();
-    const task = await taskController.getAll();
+    const task = await taskController.getTaskByIdUser(idUser);
     if(task!==null){
         res.json(task);
         res.status(201).end();
