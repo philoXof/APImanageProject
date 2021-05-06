@@ -116,10 +116,10 @@ taskRoutes.post("/",async function(req, res) {
  */
 taskRoutes.put("/name_desc:id",async function(req, res){
     const id = req.params.id;
-    const name = req.body.name;
-    const description = req.body.description;
+    let name = req.body.name;
+    let description = req.body.description;
 
-    if(id === undefined || name === undefined || description === undefined)
+    if(id === undefined || name === undefined && description === undefined)
     {
         res.status(400).end();
         return;
@@ -132,6 +132,8 @@ taskRoutes.put("/name_desc:id",async function(req, res){
         /* task non trouvée */
         res.status(404).end();
     }else {
+        name = name ?? task.name;
+        description = description ?? task.description;
         const updateTask = await taskController.update({
             id: parseInt(id),
             name,
@@ -155,7 +157,6 @@ taskRoutes.put("/name_desc:id",async function(req, res){
 taskRoutes.put("/userTask:id",async function(req, res){
     const id = parseInt(req.params.id);
     const user_id = req.body.user_id;
-    //TODO: prendre en compte si la tache est déja finis ou pas
     if(id === undefined || user_id === undefined )
     {
         /* champ(s) non renseigné(s) */
