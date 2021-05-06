@@ -55,9 +55,9 @@ taskRoutes.get("/status/:status",async function(req, res){
         res.status(400).end();
         return;
     }
-
+/** A FINIR */
     const taskController = await TaskController.getInstance();
-    const task = await taskController.getByStatus();
+    const task = await taskController.getByStatus(status);
     if(task!==null){
         res.json(task);
         res.status(201).end();
@@ -207,26 +207,15 @@ taskRoutes.put("/userTask:id",async function(req, res){
 /**
  * user finish task
  */
-//todo: ne peux pas finir une tache si pas d'utilisateur
-taskRoutes.put("/userTask:id",async function(req, res){
+taskRoutes.put("/finishTask:id",async function(req, res){
     const id = parseInt(req.params.id);
-    const user_id = req.body.user_id;
 
-    if(id === undefined || user_id === undefined )
+    if(id === undefined)
     {
         res.status(400).end();
         return;
     }
 
-    const userController = await UserController.getInstance();
-    const user = await userController.getById(user_id);
-
-    if (user===null)
-    {
-        res.status(404).end();
-    }
-    else
-    {
         const taskController = await TaskController.getInstance();
         const task = await taskController.getById(id.toString());
 
@@ -234,27 +223,33 @@ taskRoutes.put("/userTask:id",async function(req, res){
         {
             res.status(404).end();
         }
-        else
-        {
-            const updateTask = await taskController.update({
-                id: id,
-                name: task.name,
-                description: task.description,
-                status: "fini",
-                user_id: parseInt(user.id)
-            });
-            if (updateTask === null)
+        else {
+            if (task.user_id===null || task.status==="finis")
             {
-                /* update non réussie */
-                res.status(500).end();
+                res.status(403).end();
             }
             else
             {
-                res.json(updateTask);
-                res.status(200).end();
+                const updateTask = await taskController.update({
+                    id: id,
+                    name: task.name,
+                    description: task.description,
+                    status: "finis",
+                    user_id: task.id
+                });
+                if (updateTask === null)
+                {
+                    /* update non réussie */
+                    res.status(500).end();
+                }
+                else
+                {
+                    res.json(updateTask);
+                    res.status(200).end();
+                }
             }
         }
-    }
+
 });
 
 
