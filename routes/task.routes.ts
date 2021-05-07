@@ -132,21 +132,28 @@ taskRoutes.put("/name_desc:id",async function(req, res){
         /* task non trouvée */
         res.status(404).end();
     }else {
-        name = name ?? task.name;
-        description = description ?? task.description;
-        const updateTask = await taskController.update({
-            id: parseInt(id),
-            name,
-            description,
-            status: task.status,
-            user_id: null
-        });
-        if (updateTask === null) {
-            /* update non réussi */
-            res.status(500).end();
-        } else {
-            res.json(updateTask);
-            res.status(200).end();
+        if(task.status === "finis")
+        {
+            res.status(403).end();
+        }
+        else
+        {
+            name = name ?? task.name;
+            description = description ?? task.description;
+            const updateTask = await taskController.update({
+                id: parseInt(id),
+                name,
+                description,
+                status: task.status,
+                user_id: null
+            });
+            if (updateTask === null) {
+                /* update non réussi */
+                res.status(500).end();
+            } else {
+                res.json(updateTask);
+                res.status(200).end();
+            }
         }
     }
 });
@@ -180,7 +187,7 @@ taskRoutes.put("/userTask:id",async function(req, res){
         }
         else
         {
-            if(task.status !== "fini" )
+            if(task.status !== "finis" )
             {
                 const updateTask = await taskController.update({
                     id: id,
@@ -274,15 +281,18 @@ taskRoutes.delete("/:id", async function(req, res) {
     }
     else
     {
-        const taskRemove = await taskController.removeById(id);
-
-        if(taskRemove)
+        if(task.status==="finis")
         {
-            res.status(204).end();
+            res.status(403).end();
         }
-        else
-        {
-            res.status(500).end();
+        else {
+            const taskRemove = await taskController.removeById(id);
+
+            if (taskRemove) {
+                res.status(204).end();
+            } else {
+                res.status(500).end();
+            }
         }
     }
 
