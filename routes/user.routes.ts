@@ -1,5 +1,6 @@
 import express from "express";
 import {UserController} from "../controller/user.controller";
+import {TaskController} from "../controller/task.controller";
 
 const userRoutes = express();
 
@@ -91,6 +92,18 @@ userRoutes.delete("/:id", async function(req, res) {
 
     if(userRemove)
     {
+        /**
+         * todo
+         *  -pour chaques tache de l'utilisateur:
+         *      -si la tache est en cours : on mets cette tâche en status "à faire" && le user id à null
+         *      -si la tâche a en status "finis" on mets juste le user_id à "null"
+         */
+        const taskController = await TaskController.getInstance();
+        let taskUser = taskController.getTaskByIdUser(id);
+        if (taskUser !== null)
+        {
+
+        }
         res.status(204).end();
     }
     else
