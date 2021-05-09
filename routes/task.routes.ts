@@ -1,7 +1,5 @@
 import express from "express";
 import {TaskController} from "../controller/task.controller";
-import { UserController } from "../controller/user.controller";
-import {INTEGER} from "sequelize";
 
 const taskRoutes = express();
 
@@ -98,7 +96,7 @@ taskRoutes.post("/",async function(req, res) {
     const task = await taskController.add({
         name,
         description,
-        status:"à faire",
+        status:"toDo",
         difficulty,
         user_id:null
     });
