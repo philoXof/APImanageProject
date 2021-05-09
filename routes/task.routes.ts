@@ -190,7 +190,7 @@ taskRoutes.put("/startTask/:id",async function(req, res){
  *giveUp Task
  */
 
-taskRoutes.put("/finishTask:id",async function(req, res){
+taskRoutes.put("/giveupTask:id",async function(req, res){
     const id = req.params.id;
 
     if(id === undefined)

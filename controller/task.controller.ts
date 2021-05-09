@@ -147,7 +147,8 @@ export class TaskController{
 
         else {
             return await task.update({
-                status:"todo"
+                status:"todo",
+                user_id: null
             }, {
                 where: {
                     id
