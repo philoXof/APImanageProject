@@ -56,7 +56,6 @@ taskRoutes.get("/status/:status",async function(req, res){
         res.status(400).end();
         return;
     }
-/** A FINIR */
     const taskController = await TaskController.getInstance();
     const task = await taskController.getByStatus(status);
     if(task){
@@ -99,7 +98,7 @@ taskRoutes.post("/",async function(req, res) {
     const task = await taskController.add({
         name,
         description,
-        status:"todo",
+        status:"à faire",
         difficulty,
         user_id:null
     });
