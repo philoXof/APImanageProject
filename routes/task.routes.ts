@@ -1,6 +1,7 @@
 import express from "express";
 import {TaskController} from "../controller/task.controller";
 import { UserController } from "../controller/user.controller";
+import {INTEGER} from "sequelize";
 
 const taskRoutes = express();
 
@@ -16,7 +17,7 @@ taskRoutes.get("/:id",async function(req, res){
     }
     const taskController = await TaskController.getInstance();
     const task = await taskController.getById(id);
-    if(task!==null){
+    if(task){
         res.json(task);
         res.status(201).end();
     }else {
@@ -58,7 +59,7 @@ taskRoutes.get("/status/:status",async function(req, res){
 /** A FINIR */
     const taskController = await TaskController.getInstance();
     const task = await taskController.getByStatus(status);
-    if(task!==null){
+    if(task){
         res.json(task);
         res.status(201).end();
     }else {
@@ -67,16 +68,14 @@ taskRoutes.get("/status/:status",async function(req, res){
 });
 
 
-
 /**
  * get all task with limit && / || offset
  */
-taskRoutes.get("/",async function(req, res)
-{
+taskRoutes.get("/",async function(req, res){
     const taskController = await TaskController.getInstance();
     const taskList = await taskController.getAll();
 
-    if(taskList!==null){
+    if(taskList){
         res.json(taskList);
         res.status(200).end();
     }else {
@@ -91,7 +90,8 @@ taskRoutes.get("/",async function(req, res)
 taskRoutes.post("/",async function(req, res) {
     const name = req.body.name;
     const description = req.body.description;
-    if(name === undefined || description === undefined ){
+    const difficulty = req.body.difficulty;
+    if(name === undefined || description === undefined || difficulty === undefined){
         res.status(400).end();
         return;
     }
@@ -99,10 +99,11 @@ taskRoutes.post("/",async function(req, res) {
     const task = await taskController.add({
         name,
         description,
-        status:"à faire",
+        status:"todo",
+        difficulty,
         user_id:null
     });
-    if(task!==null){
+    if(task){
         res.status(201);
         res.json(task);
     }else {
@@ -112,111 +113,60 @@ taskRoutes.post("/",async function(req, res) {
 });
 
 /**
- * update task name / description
+ * update task name / description / difficulty
  */
-taskRoutes.put("/name_desc:id",async function(req, res){
+taskRoutes.put("/update/:id",async function(req, res){
     const id = req.params.id;
-    let name = req.body.name;
-    let description = req.body.description;
+    const name = req.body.name;
+    const description = req.body.description;
+    const difficulty = parseInt(req.body.difficulty);
 
-    if(id === undefined || name === undefined && description === undefined)
-    {
+    if(id === undefined || name === undefined && description === undefined && difficulty === undefined){
         res.status(400).end();
         return;
     }
 
     const taskController = await TaskController.getInstance();
-    const task = await taskController.getById(id);
-
-    if(task===null){
-        /* task non trouvée */
-        res.status(404).end();
-    }else {
-        if(task.status === "finis")
-        {
-            res.status(403).end();
-        }
-        else
-        {
-            name = name ?? task.name;
-            description = description ?? task.description;
-            const updateTask = await taskController.update({
-                id: parseInt(id),
-                name,
-                description,
-                status: task.status,
-                user_id: null
-            });
-            if (updateTask === null) {
-                /* update non réussi */
-                res.status(500).end();
-            } else {
-                res.json(updateTask);
-                res.status(200).end();
-            }
-        }
+    const updateTask = await taskController.update(id,name,description,difficulty);
+    if (!updateTask) {
+        /* update non réussi */
+        res.status(500).end();
+    } else {
+        res.json(updateTask);
+        res.status(200).end();
     }
+
 });
+
 
 /**
  * asign task to user need user's id in body && task id in params
  */
-taskRoutes.put("/userTask:id",async function(req, res){
-    const id = parseInt(req.params.id);
-    const user_id = req.body.user_id;
-    if(id === undefined || user_id === undefined )
-    {
-        /* champ(s) non renseigné(s) */
+taskRoutes.put("/task/:idTask/user/:idUser",async function(req, res){
+    const idTask = req.params.idTask;
+    const idUser = req.params.user_id;
+
+    if(idTask === undefined || idUser === undefined ) {
         res.status(400).end();
         return;
     }
-    const userController = await UserController.getInstance();
-    const user = await userController.getById(user_id);
-    if (user===null) {
-        /* user non existant */
-        res.status(404).end();
-    }
-    else
-    {
-        const taskController = await TaskController.getInstance();
-        const task = await taskController.getById(id.toString());
+    const taskController = await TaskController.getInstance();
 
-        if (task === null) {
-            /* task non existante */
-            res.status(404).end();
-        }
-        else
-        {
-            if(task.status !== "finis" )
-            {
-                const updateTask = await taskController.update({
-                    id: id,
-                    name: task.name,
-                    description: task.description,
-                    status: "en cours",
-                    user_id: parseInt(user.id)
-                });
-                if (updateTask === null) {
-                    res.status(500).end();
-                } else {
-                    res.json(updateTask);
-                }
-            }
-            else
-            {
-                //utilisateur ne peux pas prendre une tache finis
-                res.status(403).end();
-            }
-        }
+    const updateTask = await taskController.addUserToTask(idTask,idUser);
+    if (!updateTask) {
+        res.status(500).end();
+    } else {
+        res.json(updateTask);
     }
+
 });
 
 
 /**
- * user finish task
+ * start task
  */
-taskRoutes.put("/finishTask:id",async function(req, res){
-    const id = parseInt(req.params.id);
+taskRoutes.put("/startTask/:id",async function(req, res){
+    const id = req.params.id;
 
     if(id === undefined)
     {
@@ -224,42 +174,41 @@ taskRoutes.put("/finishTask:id",async function(req, res){
         return;
     }
 
-        const taskController = await TaskController.getInstance();
-        const task = await taskController.getById(id.toString());
-
-        if(task===null)
-        {
-            res.status(404).end();
-        }
-        else {
-            if (task.user_id===null || task.status==="finis")
-            {
-                res.status(403).end();
-            }
-            else
-            {
-                const updateTask = await taskController.update({
-                    id: id,
-                    name: task.name,
-                    description: task.description,
-                    status: "finis",
-                    user_id: task.id
-                });
-                if (updateTask === null)
-                {
-                    /* update non réussie */
-                    res.status(500).end();
-                }
-                else
-                {
-                    res.json(updateTask);
-                    res.status(200).end();
-                }
-            }
-        }
-
+    const taskController = await TaskController.getInstance();
+    const updateTask = await taskController.startTask(id);
+    if (!updateTask) {
+        /* update non réussie */
+        res.status(500).end();
+    }
+    else {
+        res.json(updateTask);
+        res.status(200).end();
+    }
 });
 
+/**
+ * user finish task
+ */
+taskRoutes.put("/finishTask:id",async function(req, res){
+    const id = req.params.id;
+
+    if(id === undefined)
+    {
+        res.status(400).end();
+        return;
+    }
+
+    const taskController = await TaskController.getInstance();
+    const updateTask = await taskController.finishTask(id);
+    if (!updateTask) {
+        /* update non réussie */
+        res.status(500).end();
+    }
+    else {
+        res.json(updateTask);
+        res.status(200).end();
+    }
+});
 
 /**
  * delete task by id
@@ -273,29 +222,13 @@ taskRoutes.delete("/:id", async function(req, res) {
     }
 
     const taskController = await TaskController.getInstance();
-    const task = await taskController.getById(id);
-    if (task === null)
-    {
-        /* task non existante */
-        res.status(404).end();
-    }
-    else
-    {
-        if(task.status==="finis")
-        {
-            res.status(403).end();
-        }
-        else {
-            const taskRemove = await taskController.removeById(id);
+    const taskRemove = await taskController.removeById(id);
 
-            if (taskRemove) {
-                res.status(204).end();
-            } else {
-                res.status(500).end();
-            }
-        }
+    if (taskRemove) {
+        res.status(204).end();
+    } else {
+        res.status(500).end();
     }
-
 });
 
 export {

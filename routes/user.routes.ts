@@ -12,7 +12,7 @@ userRoutes.get("/:id",async function(req, res){
     }
     const userController = await UserController.getInstance();
     const user = await userController.getById(id);
-    if(user!==null){
+    if(user){
         res.json(user);
         res.status(201).end();
     }else {
@@ -45,7 +45,7 @@ userRoutes.post("/",async function(req, res) {
         firstName,
         lastName
     });
-    if(user!==null){
+    if(user){
         res.status(201);
         res.json(user);
     }else {
@@ -70,12 +70,10 @@ userRoutes.put("/:id",async function(req, res){
         firstName,
         lastName
     });
-    if(user === null)
-    {
+    if(!user) {
         res.status(404).end();
     }
-    else
-    {
+    else {
         res.json(user);
     }
 });
