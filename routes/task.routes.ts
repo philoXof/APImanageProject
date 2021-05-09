@@ -187,6 +187,32 @@ taskRoutes.put("/startTask/:id",async function(req, res){
 });
 
 /**
+ *giveUp Task
+ */
+
+taskRoutes.put("/finishTask:id",async function(req, res){
+    const id = req.params.id;
+
+    if(id === undefined)
+    {
+        res.status(400).end();
+        return;
+    }
+
+    const taskController = await TaskController.getInstance();
+    const updateTask = await taskController.giveUpTask(id);
+    if (!updateTask) {
+        /* update non réussie */
+        res.status(500).end();
+    }
+    else {
+        res.json(updateTask);
+        res.status(200).end();
+    }
+});
+
+
+/**
  * user finish task
  */
 taskRoutes.put("/finishTask:id",async function(req, res){

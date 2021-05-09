@@ -141,4 +141,19 @@ export class TaskController{
         }
     }
 
+    public async giveUpTask(id:string):Promise<TaskInstance | null>{
+        const task = await this.getById(id);
+        if(!task ||  task.status !== "en cours") return null;
+
+        else {
+            return await task.update({
+                status:"todo"
+            }, {
+                where: {
+                    id
+                }
+            });
+        }
+    }
+
 }
