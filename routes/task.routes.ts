@@ -187,7 +187,7 @@ taskRoutes.put("/startTask/:id",async function(req, res){
  *giveUp Task
  */
 
-taskRoutes.put("/giveupTask:id",async function(req, res){
+taskRoutes.put("/giveUpTask/:id",async function(req, res){
     const id = req.params.id;
 
     if(id === undefined)
@@ -212,7 +212,7 @@ taskRoutes.put("/giveupTask:id",async function(req, res){
 /**
  * user finish task
  */
-taskRoutes.put("/finishTask:id",async function(req, res){
+taskRoutes.put("/finishTask/:id",async function(req, res){
     const id = req.params.id;
 
     if(id === undefined)
