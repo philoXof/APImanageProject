@@ -78,7 +78,7 @@ export class TaskController{
 
     public async update(id:string,name:string,description:string,difficulty:number):Promise<TaskInstance | null>{
         const task = await this.getById(id);
-        if(!task || task.status === "finish")return null;
+        if(!task || task.status === "finished")return null;
 
         else {
             return await task.update({
@@ -98,7 +98,7 @@ export class TaskController{
 
         const task = await this.getById(id);
         const user = await userController.getById(id);
-        if(!task || !user || task.status !== "finish") return null;
+        if(!task || !user || task.status !== "finished") return null;
 
         else {
             return await task.update({
@@ -128,11 +128,11 @@ export class TaskController{
 
     public async finishTask(id:string):Promise<TaskInstance | null>{
         const task = await this.getById(id);
-        if(!task ||  task.status !== "en cours") return null;
+        if(!task ||  task.status !== "progress") return null;
 
         else {
             return await task.update({
-                status:"finis"
+                status:"finished"
             }, {
                 where: {
                     id
