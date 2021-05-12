@@ -93,19 +93,19 @@ export class TaskController{
         }
     }
 
-    public async addUserToTask(id:string, idUser:string):Promise<TaskInstance | null>{
+    public async addUserToTask(idTask:string, idUser:string):Promise<TaskInstance | null>{
         const userController = await UserController.getInstance();
 
-        const task = await this.getById(id);
-        const user = await userController.getById(id);
-        if(!task || !user || task.status !== "finished") return null;
+        const task = await this.getById(idTask);
+        const user = await userController.getById(idUser);
+        if(!task || !user || task.status == "finished") return null;
 
         else {
             return await task.update({
                 user_id:idUser
             }, {
                 where: {
-                    id
+                    id:idTask
                 }
             });
         }

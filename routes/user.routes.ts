@@ -12,6 +12,7 @@ userRoutes.get("/:id",async function(req, res){
     }
     const userController = await UserController.getInstance();
     const user = await userController.getById(id);
+    console.log(id);
     if(user){
         res.json(user);
         res.status(201).end();

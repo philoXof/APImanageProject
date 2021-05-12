@@ -139,9 +139,9 @@ taskRoutes.put("/update/:id",async function(req, res){
 /**
  * asign task to user need user's id in body && task id in params
  */
-taskRoutes.put("/task/:idTask/user/:idUser",async function(req, res){
+taskRoutes.put("/:idTask/user/:idUser",async function(req, res){
     const idTask = req.params.idTask;
-    const idUser = req.params.user_id;
+    const idUser = req.params.idUser;
 
     if(idTask === undefined || idUser === undefined ) {
         res.status(400).end();
