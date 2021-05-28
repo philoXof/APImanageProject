@@ -16,6 +16,8 @@ export interface UserProps {
     id: string;
     firstName: string;
     lastName: string;
+    pseudo:string;
+    password:string;
 }
 
 export interface UserCreationProps extends Optional<UserProps, "id"> {}
@@ -35,6 +37,12 @@ export default function(sequelize:Sequelize): ModelCtor<UserInstance>{
         firstName:{
             type:DataTypes.STRING
         },lastName:{
+            type:DataTypes.STRING
+        },
+        pseudo:{
+            type:DataTypes.STRING
+        },
+        password:{
             type:DataTypes.STRING
         }
 
