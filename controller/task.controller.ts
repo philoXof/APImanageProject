@@ -113,17 +113,24 @@ export class TaskController{
 
     public async startTask(id:string):Promise<TaskInstance | null>{
         const task = await this.getById(id);
-        if(!task || task.status !== "toDo") return null;
+        if (!task) return null;
+        const previous_task = await this.getById(String(task.id_previous_task));
 
-        else {
-            return await task.update({
-                status:"progress"
-            }, {
-                where: {
-                    id
-                }
-            });
+        if(task.status !== "toDo") return null;
+
+        if (previous_task){
+            if(previous_task.status !== "finished"){
+                return null;
+            }
         }
+
+        return await task.update({
+            status:"progress"
+        }, {
+            where: {
+                id
+            }
+        });
     }
 
     public async finishTask(id:string):Promise<TaskInstance | null>{
@@ -156,5 +163,30 @@ export class TaskController{
             });
         }
     }
+
+    public async addPreviousTask (idTask: string, id_previous_task: string): Promise<TaskInstance | null> {
+        if (!idTask || !id_previous_task) {
+            return null;
+        }
+        const current_task = await this.getById(idTask);
+        const previous_task = await this.getById(id_previous_task);
+
+        if (!current_task || !previous_task) {
+            return null;
+        }
+
+        return current_task.update({
+           id_previous_task: id_previous_task
+        }, {
+            where: {
+                id: idTask
+            }
+        });
+    }
+
+
+
+
+
 
 }

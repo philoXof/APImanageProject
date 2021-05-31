@@ -82,7 +82,7 @@ taskRoutes.get("/",async function(req, res){
 
 /**
  * add task
- * by default no user assigned && status "disponible"
+ * by default no user assigned && no previous task && status "disponible"
  */
 taskRoutes.post("/",async function(req, res) {
     const name = req.body.name;
@@ -98,7 +98,8 @@ taskRoutes.post("/",async function(req, res) {
         description,
         status:"toDo",
         difficulty,
-        user_id:null
+        user_id:null,
+        id_previous_task: null
     });
     if(task){
         res.status(201);
@@ -161,6 +162,8 @@ taskRoutes.put("/:idTask/user/:idUser",async function(req, res){
 
 /**
  * start task
+ * a task can only be started if the status of its previous task is "finished"
+ *
  */
 taskRoutes.put("/startTask/:id",async function(req, res){
     const id = req.params.id;
@@ -230,6 +233,27 @@ taskRoutes.put("/finishTask/:id",async function(req, res){
     else {
         res.json(updateTask);
         res.status(200).end();
+    }
+});
+
+/**
+ * assign a previous task
+ */
+taskRoutes.put("/assignPreviousTask/:idTask/:idPreviousTask", async function(req, res){
+    const idTask = await req.params.idTask;
+    const idPreviousTask = await req.params.idPreviousTask;
+
+    if (!idTask || !idPreviousTask) {
+        res.status(400).end();
+    }
+
+    const taskController = await TaskController.getInstance();
+    const assignPreviousTask = taskController.addPreviousTask(idTask, idPreviousTask);
+
+    if (assignPreviousTask) {
+        res.status(204).end();
+    } else {
+        res.status(500).end();
     }
 });
 

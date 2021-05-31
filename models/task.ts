@@ -17,6 +17,7 @@ export interface TaskProps {
     difficulty: number;
     status: string;
     user_id: number | null;
+    id_previous_task: number | null;
 
 }
 
@@ -48,6 +49,9 @@ export default function(sequelize:Sequelize): ModelCtor<TaskInstance>{
             type: DataTypes.STRING
         },
         user_id:{
+            type:DataTypes.BIGINT
+        },
+        id_previous_task:{
             type:DataTypes.BIGINT
         }
     },{
