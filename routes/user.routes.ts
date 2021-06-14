@@ -4,39 +4,52 @@ import {TaskController} from "../controller/task.controller";
 
 const userRoutes = express();
 
+
 userRoutes.get("/:id",async function(req, res){
     const id = req.params.id;
-    if(id===undefined){
+    if(id===undefined)
+    {
         res.status(400).end();
         return;
     }
     const userController = await UserController.getInstance();
     const user = await userController.getById(id);
     console.log(id);
-    if(user){
+    if(user)
+    {
         res.json(user);
         res.status(201).end();
-    }else {
-        res.status(409).end();
+    }
+    else
+    {
+        res.status(404).end();
     }
 });
+
 
 userRoutes.get("/",async function(req, res){
     const userController = await UserController.getInstance();
     const userList = await userController.getAll();
-    if(userList!==null){
+    if(userList!==null)
+    {
         res.json(userList);
         res.status(201).end();
-    }else {
-        res.status(409).end();
+    }
+    else
+    {
+        res.status(404).end();
     }
 });
+
+
 
 userRoutes.post("/",async function(req, res) {
     const firstName = req.body.firstName;
     const lastName = req.body.lastName;
+    const pseudo = req.body.pseudo
+    const password = req.body.password;
 
-    if(firstName === undefined || lastName === undefined )
+    if(firstName === undefined || lastName === undefined || pseudo === undefined || password === undefined)
     {
         res.status(400).end();
         return;
@@ -44,7 +57,9 @@ userRoutes.post("/",async function(req, res) {
     const userController = await UserController.getInstance();
     const user = await userController.add({
         firstName,
-        lastName
+        lastName,
+        pseudo,
+        password
     });
     if(user){
         res.status(201);
@@ -54,30 +69,46 @@ userRoutes.post("/",async function(req, res) {
     }
 });
 
+
 userRoutes.put("/:id",async function(req, res){
     const id = req.params.id;
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
 
-    if(id === null || lastName === null || firstName === null)
+    if(id === undefined )
     {
         res.status(400).end();
         return;
     }
 
     const userController = await UserController.getInstance();
-    const user = await userController.update({
-        id,
-        firstName,
-        lastName
-    });
-    if(!user) {
+    const user = await userController.getById(id);
+    if (user === null)
+    {
         res.status(404).end();
+        return;
+    }else{
+        /* si une infos n'est pas renseignée, on la laisse par défaut */
+        const firstName = req.body.firstName || user.firstName;
+        const lastName = req.body.lastName || user.lastName;
+        const pseudo = req.body.pseudo || user.pseudo;
+        const password = req.body.password || user.password;
+
+        const updateUser = await userController.update({
+            id,
+            firstName,
+            lastName,
+            pseudo,
+            password
+        });
+        if(!updateUser) {
+            res.status(404).end();
+        }
+        else {
+            res.json(updateUser);
+        }
     }
-    else {
-        res.json(user);
-    }
+
 });
+
 
 userRoutes.delete("/:id", async function(req, res) {
     const id = req.params.id;
