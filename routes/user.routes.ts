@@ -27,6 +27,7 @@ userRoutes.get("/:id",async function(req, res){
 });
 
 
+
 userRoutes.get("/",async function(req, res){
     const userController = await UserController.getInstance();
     const userList = await userController.getAll();
@@ -54,6 +55,7 @@ userRoutes.post("/",async function(req, res) {
         res.status(400).end();
         return;
     }
+
     const userController = await UserController.getInstance();
     const user = await userController.add({
         firstName,
@@ -142,15 +144,15 @@ userRoutes.delete("/:id", async function(req, res) {
     }
 });
 
-userRoutes.post("/connection",async function (req, res){
-    const pseudo = req.body.firstName;
-    const password = req.body.lastName;
+userRoutes.get("/connection",async function (req, res){
+    const pseudo = req.body.pseudo;
+    const password = req.body.password;
 
-    if(!pseudo || ! password){
+    if(pseudo === undefined || password === undefined){
         res.status(400).end();
     }
     const userController = await UserController.getInstance();
-    let user = userController.connection(pseudo,password);
+    const user = userController.connection(pseudo,password);
 
     if(!user){
         res.status(404).end();
