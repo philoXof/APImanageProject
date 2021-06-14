@@ -14,7 +14,7 @@ userRoutes.get("/:id",async function(req, res){
     }
     const userController = await UserController.getInstance();
     const user = await userController.getById(id);
-    console.log(id);
+
     if(user)
     {
         res.json(user);
@@ -106,6 +106,7 @@ userRoutes.put("/:id",async function(req, res){
         }
         else {
             res.json(updateUser);
+            res.status(200).end();
         }
     }
 
@@ -131,7 +132,7 @@ userRoutes.delete("/:id", async function(req, res) {
          *      -si la tâche a en status "finis" on mets juste le user_id à "null"
          */
         const taskController = await TaskController.getInstance();
-        let taskUser = taskController.getTaskByIdUser(id);
+        let taskUser = await taskController.getTaskByIdUser(id);
         if (taskUser !== null)
         {
 
@@ -144,20 +145,22 @@ userRoutes.delete("/:id", async function(req, res) {
     }
 });
 
-userRoutes.get("/connection",async function (req, res){
+userRoutes.post("/connection",async function (req, res){
     const pseudo = req.body.pseudo;
     const password = req.body.password;
-
     if(pseudo === undefined || password === undefined){
         res.status(400).end();
     }
     const userController = await UserController.getInstance();
-    const user = userController.connection(pseudo,password);
+    const user = await userController.connection(pseudo,password);
 
     if(!user){
         res.status(404).end();
+        return;
+    }else{
+        res.json(user);
+        res.status(204).end();
     }
-    res.status(204).end();
 
 });
 

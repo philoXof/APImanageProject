@@ -240,15 +240,15 @@ taskRoutes.put("/finishTask/:id",async function(req, res){
  * assign a previous task
  */
 taskRoutes.put("/assignPreviousTask/:idTask/:idPreviousTask", async function(req, res){
-    const idTask = await req.params.idTask;
-    const idPreviousTask = await req.params.idPreviousTask;
+    const idTask = req.params.idTask;
+    const idPreviousTask = req.params.idPreviousTask;
 
     if (!idTask || !idPreviousTask) {
         res.status(400).end();
     }
 
     const taskController = await TaskController.getInstance();
-    const assignPreviousTask = taskController.addPreviousTask(idTask, idPreviousTask);
+    const assignPreviousTask = await taskController.addPreviousTask(idTask, idPreviousTask);
 
     if (assignPreviousTask) {
         res.status(204).end();
