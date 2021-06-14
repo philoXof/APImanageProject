@@ -111,6 +111,23 @@ userRoutes.delete("/:id", async function(req, res) {
     }
 });
 
+userRoutes.post("/connection",async function (req, res){
+    const pseudo = req.body.firstName;
+    const password = req.body.lastName;
+
+    if(!pseudo || ! password){
+        res.status(400).end();
+    }
+    const userController = await UserController.getInstance();
+    let user = userController.connection(pseudo,password);
+
+    if(!user){
+        res.status(404).end();
+    }
+    res.status(204).end();
+
+});
+
 export {
     userRoutes
 };

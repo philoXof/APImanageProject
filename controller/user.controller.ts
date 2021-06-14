@@ -84,4 +84,11 @@ export class UserController{
         }
     }
 
+    public async connection(pseudo: string, password: string) {
+        return await this.User.findOne({where: {
+                pseudo,
+                password
+            }});
+
+    }
 }

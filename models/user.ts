@@ -5,8 +5,6 @@ import {
     DataTypes,
     ModelCtor,
     HasManyGetAssociationsMixin,
-    HasOneGetAssociationMixin,
-    HasOneSetAssociationMixin,
     HasManySetAssociationsMixin
 } from "sequelize";
 import {TaskInstance} from "./task";
