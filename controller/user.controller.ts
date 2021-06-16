@@ -26,6 +26,12 @@ export class UserController{
         });
     }
 
+    public async getByPseudo(pseudo: string):Promise<UserInstance | null>{
+        return await this.User.findOne({where:{
+            pseudo
+            }});
+    }
+
     public async getById(id:string):Promise<UserInstance|null>{
         return await this.User.findOne({where: {
                 id

@@ -57,18 +57,25 @@ userRoutes.post("/",async function(req, res) {
     }
 
     const userController = await UserController.getInstance();
-    const user = await userController.add({
-        firstName,
-        lastName,
-        pseudo,
-        password
-    });
-    if(user){
-        res.status(201);
-        res.json(user);
-    }else {
-        res.status(409).end();
+    const userExist = await userController.getByPseudo(pseudo);
+    if (userExist === null){
+        const user = await userController.add({
+            firstName,
+            lastName,
+            pseudo,
+            password
+        });
+        if(user){
+            res.status(201);
+            res.json(user);
+        }else {
+            res.status(409).end();
+        }
+    }else{
+        res.status(403).end();
+        return;
     }
+
 });
 
 
