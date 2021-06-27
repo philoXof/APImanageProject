@@ -51,6 +51,16 @@ export class TaskController{
             }
         });
     }
+// a finir pour quand on suppr un user
+    public async getTasksByIdUser(idUser: string) : Promise<TaskInstance | null>{
+        if(idUser === undefined) return null;
+
+        return await this.Task.findOne({
+            where: {
+                user_id:idUser
+            }
+        });
+    }
 
     public async removeById(id:string):Promise<Boolean>{
         const taskToDelete = await this.getById(id);

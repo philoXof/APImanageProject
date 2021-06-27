@@ -1,6 +1,7 @@
 import express from "express";
 import {UserController} from "../controller/user.controller";
 import {TaskController} from "../controller/task.controller";
+import task from "../models/task";
 
 const userRoutes = express();
 
@@ -138,12 +139,13 @@ userRoutes.delete("/:id", async function(req, res) {
          *      -si la tache est en cours : on mets cette tâche en status "à faire" && le user id à null
          *      -si la tâche a en status "finis" on mets juste le user_id à "null"
          */
-        const taskController = await TaskController.getInstance();
-        let taskUser = await taskController.getTaskByIdUser(id);
-        if (taskUser !== null)
-        {
+        /*const taskController = await TaskController.getInstance();
+        let taskUser;
 
-        }
+        while ( (taskUser = await taskController.getTaskByIdUser(id)) !== null)
+        {
+            await taskController.removeById(taskUser.id.toString())
+        }*/
         res.status(204).end();
     }
     else
